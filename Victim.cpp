@@ -22,7 +22,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // Register window class
-    const wchar_t* CLASS_NAME = L"Sample Window Class";
+    const char* CLASS_NAME = "Sample Window Class";
+    const wchar_t* CLASS_NAME2 = L"Sample Window Class";
     WNDCLASS wc = {};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -32,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Create window
     HWND hwnd = CreateWindowExW(
             0,                              // Optional window styles
-            CLASS_NAME,                     // Window class
+            CLASS_NAME2,                     // Window class
             L"Sample Window",               // Window title
             WS_OVERLAPPEDWINDOW,            // Window style
             CW_USEDEFAULT, CW_USEDEFAULT,   // Position
