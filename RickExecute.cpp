@@ -22,7 +22,7 @@ void OverrideShellExecuteA(FARPROC* pImportTableAddress)
 {
     DWORD oldProtection;
     if (!VirtualProtect(pImportTableAddress, sizeof(ShellExecuteAType), PAGE_EXECUTE_READWRITE, &oldProtection)) {
-        MessageBox(nullptr, "Failed to access memory", "Error", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, "Failed to override memory", "Error", MB_OK | MB_ICONERROR);
         return;
     }
     *pImportTableAddress = reinterpret_cast<FARPROC>(&RickExecuteA);
@@ -64,7 +64,6 @@ FARPROC* RetrieveDLLFunctionImportTableAddress(LPCSTR lpstrModuleName, LPCSTR lp
             while (*pAddressTable != nullptr) {
                 // Read the address of the imported function
                 if (*pAddressTable == GetProcAddress(GetModuleHandle(TEXT(lpstrModuleName)), TEXT(lpstrFuncName))) {
-                    MessageBox(nullptr, "Found ShellExecuteA", "Hooray", MB_OK);
                     return pAddressTable;
                 }
 
