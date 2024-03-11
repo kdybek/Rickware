@@ -12,8 +12,9 @@ ShellExecuteAType g_pfnOriginalShellExecuteA = nullptr;
 HINSTANCE WINAPI
 RickExecuteA(HWND hwnd, LPCSTR lpOperation, LPCSTR lpFile, LPCSTR lpParameters, LPCSTR lpDirectory, INT nShowCmd)
 {
-    return g_pfnOriginalShellExecuteA(NULL, "open", "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley",
-                                      NULL, NULL, SW_SHOWNORMAL);
+    return g_pfnOriginalShellExecuteA(nullptr, "open",
+                                      "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley",
+                                      nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 // Override the ShellExecuteA function
@@ -38,15 +39,15 @@ FARPROC* RetrieveDLLFunctionImportTableAddress(LPCSTR lpstrModuleName, LPCSTR lp
     }
 
     // Get the DOS header
-    PIMAGE_DOS_HEADER pDosHeader = reinterpret_cast<PIMAGE_DOS_HEADER>(hModule);
+    auto pDosHeader = reinterpret_cast<PIMAGE_DOS_HEADER>(hModule);
 
     // Navigate to the PE header
-    PIMAGE_NT_HEADERS pNTHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<DWORD_PTR>(pDosHeader) +
-                                                                      pDosHeader->e_lfanew);
+    auto pNTHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<DWORD_PTR>(pDosHeader) +
+                                                         pDosHeader->e_lfanew);
 
     // Navigate to the optional header and locate the import table directory
     PIMAGE_OPTIONAL_HEADER pOptionalHeader = &pNTHeader->OptionalHeader;
-    PIMAGE_IMPORT_DESCRIPTOR pImportDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
+    auto pImportDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
             reinterpret_cast<DWORD_PTR>(hModule) +
             pOptionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
 
@@ -58,9 +59,9 @@ FARPROC* RetrieveDLLFunctionImportTableAddress(LPCSTR lpstrModuleName, LPCSTR lp
 
         if (std::strcmp(pszDLLName, TEXT(lpstrModuleName)) == 0) {
             // Iterate over the array of function pointers (import address table)
-            FARPROC* pAddressTable = reinterpret_cast<FARPROC*>(reinterpret_cast<DWORD_PTR>(hModule) +
-                                                                pImportDescriptor->FirstThunk);
-            while (*pAddressTable != 0) {
+            auto* pAddressTable = reinterpret_cast<FARPROC*>(reinterpret_cast<DWORD_PTR>(hModule) +
+                                                             pImportDescriptor->FirstThunk);
+            while (*pAddressTable != nullptr) {
                 // Read the address of the imported function
                 if (*pAddressTable == GetProcAddress(GetModuleHandle(TEXT(lpstrModuleName)), TEXT(lpstrFuncName))) {
                     MessageBox(nullptr, "Found ShellExecuteA", "Hooray", MB_OK);
